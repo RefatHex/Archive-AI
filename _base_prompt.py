@@ -48,7 +48,7 @@ Make sure to give the result in this formate.
 """
 
 def get_prompt(date):
-    prompt=f"Tell me all historical event on this date {date}  and return the result in json format as the example."+EXAMPLE_PROMPT
+  prompt=f"Tell me all historical events on this date {date} and return the result in JSON format as shown below.\n\n{EXAMPLE_PROMPT}"
 
-    print(prompt)
+  print(prompt)
     
