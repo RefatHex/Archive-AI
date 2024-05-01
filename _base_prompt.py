@@ -1,5 +1,3 @@
-
-
 EXAMPLE_PROMPT="""
 Make sure to give the result in this formate.
 {
@@ -54,4 +52,3 @@ def get_prompt(date):
 
     print(prompt)
     
-get_prompt("1967")
