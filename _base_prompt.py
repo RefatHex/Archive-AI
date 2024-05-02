@@ -1,5 +1,7 @@
+import json
+
+
 EXAMPLE_PROMPT="""
-Make sure to give the result in this formate.
 {
   "events": [
     {
@@ -43,12 +45,9 @@ Make sure to give the result in this formate.
       "wiki_link": "example"
     }
   ]
-}
-
-"""
+}"""
 
 def get_prompt(date):
-  prompt=f"Tell me all historical events on this date {date} and return the result in JSON format as shown below.\n\n{EXAMPLE_PROMPT}"
-
-  print(prompt)
+  prompt=f"Tell me all historical events on this date {date} and Please provide a response in a structured JSON format that matches the following model:\n\n{EXAMPLE_PROMPT}"
+  return prompt
     
