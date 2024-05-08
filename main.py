@@ -1,35 +1,62 @@
-import requests
-from _base_prompt import get_prompt
+import json
+from api import GOOGLE_API_KEY
+import google.generativeai as gen_ai
 import streamlit as st
-import streamlit.components.v1 as components
+from _base_prompt import get_prompt
+from extract import extract_json
 from world_map import render_map
 
-@st.cache  # eita decorator use korsi cache the function's return values pawar lai
-def query_gemini_ai(prompt):
-    url = "https://api.gemini.ai/endpoint"  # real api endpoint add marr
-    headers = { 
-        'Authorization': 'Bearer YOUR_ACCESS_TOKEN',   # token add marr
-        'Content-Type': 'application/json' 
-    }
-    response = requests.post(url, headers=headers, json={'prompt': prompt})
-    return response.json()
+st.set_page_config(
+    page_title="History Searcher",  # Page title
+    page_icon=":brain:",  # Favicon emoji
+    layout="centered",  # Page layout option
+)
 
+GOOGLE_API_KEY = GOOGLE_API_KEY
 
+# Set up Google Gemini-Pro AI model
+gen_ai.configure(api_key=GOOGLE_API_KEY)
+model = gen_ai.GenerativeModel('gemini-pro')
 
-
-def main():
-    st.title('Gemini AI Historic Event Searcher')
-    date = st.text_input("Enter a date (YYYY-MM-DD): ")
-    if date:
-        prompt = get_prompt(date)  
-        response = query_gemini_ai(prompt)
-        st.write(response)  
-        
+def beautify_events(events):
+    for event in events:
+        st.subheader(event['title'])
+        st.markdown(f"**Date:** {event['date']}")
+        st.markdown(f"**Description:** {event['description']}")
+        st.markdown(f"**Location:** {event['location']}")
+        st.markdown(f"[Wikipedia Link]({event['wiki_link']})")
+        st.write('\n')
+      ## for map   
     render_map()
+
+date = st.text_input("Ask Gemini-Pro...")
+if date:
+    # Display user's prompt
+    st.write("User Prompt:")
+    st.write(date)
+
+    # Get prompt based on the selected date
+    prompt = get_prompt(date)
+
+    # Send user's message to Gemini-Pro and get the response
+    gemini_response = model.generate_content(prompt)
+    content=gemini_response.text
+    try:
+        content_json = json.loads(content)
+        if 'events' in content_json:
+            beautify_events(content_json['events'])
+            ## mapped
+            
+        else:
+            st.markdown(content)
+            st.error("No valid events found in Gemini-Pro's response.")
+    except json.JSONDecodeError:
+        st.error("Invalid JSON response from Gemini-Pro.")
+  
+
+   
+    
+      
         
-
-       
-
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__beautify_events__":
+    beautify_events()
