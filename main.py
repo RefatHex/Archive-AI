@@ -1,6 +1,8 @@
 import requests
 from _base_prompt import get_prompt
 import streamlit as st
+import streamlit.components.v1 as components
+from world_map import render_map
 
 @st.cache  # eita decorator use korsi cache the function's return values pawar lai
 def query_gemini_ai(prompt):
@@ -12,6 +14,9 @@ def query_gemini_ai(prompt):
     response = requests.post(url, headers=headers, json={'prompt': prompt})
     return response.json()
 
+
+
+
 def main():
     st.title('Gemini AI Historic Event Searcher')
     date = st.text_input("Enter a date (YYYY-MM-DD): ")
@@ -19,6 +24,12 @@ def main():
         prompt = get_prompt(date)  
         response = query_gemini_ai(prompt)
         st.write(response)  
+        
+    render_map()
+        
+
+       
+
 
 if __name__ == '__main__':
     main()
