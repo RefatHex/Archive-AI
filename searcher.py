@@ -36,7 +36,7 @@ def beautify_events(events):
     render_map(country_colors)
 
 
-date = st.text_input("Ask Gemini-Pro...")
+date = st.text_input("Enter a date format(month/date/year)...")
 if date:
 
     st.write("User Prompt:")
@@ -44,6 +44,7 @@ if date:
 
    
     prompt = get_prompt(date)
+
 
     gemini_response = model.generate_content(prompt)
     content=gemini_response.text
