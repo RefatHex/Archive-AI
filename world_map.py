@@ -1,7 +1,8 @@
+import json
 import streamlit as st
 import streamlit.components.v1 as components
 
-def render_map():
+def render_map(country_colors):
     html_content = """
     <script src="https://www.amcharts.com/lib/4/core.js"></script>
     <script src="https://www.amcharts.com/lib/4/maps.js"></script>
@@ -18,14 +19,7 @@ def render_map():
     chart.deltaLatitude = -20;
     chart.padding(20,20,20,20);
 
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
+    var countryColors = JSON.parse('""" + json.dumps(country_colors) + """');
 
     var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
     polygonSeries.useGeodata = true;
@@ -36,9 +30,9 @@ def render_map():
     polygonTemplate.stroke = am4core.color("#454a58");
     polygonTemplate.strokeWidth = 0.5;
 
-    // Assign a random color to each country polygon using an adapter
-    polygonTemplate.adapter.add("fill", function(fill, target) {
-        return am4core.color(getRandomColor());
+    // Assign colors to countries
+    polygonSeries.data = countryColors.map(function(item) {
+        return { id: item.countryCode, fill: am4core.color(item.color) };
     });
 
     </script>
